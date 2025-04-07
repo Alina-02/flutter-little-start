@@ -4,6 +4,7 @@ import 'package:tutorial1/pages/first_page.dart';
 import 'package:tutorial1/pages/home_page.dart';
 import 'package:tutorial1/pages/profile_page.dart';
 import 'package:tutorial1/pages/settings_page.dart';
+import 'package:tutorial1/pages/todoapp/todo_page.dart';
 
 void main() {
   runApp(const MyApp());
@@ -28,7 +29,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: CounterPage(),
+      home: ToDoPage(),
       routes: {
         '/firstpage': (context) => FirstPage(),
         '/homepage': (context) => HomePage(),
