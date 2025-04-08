@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:tutorial1/pages/counter_page.dart';
 import 'package:tutorial1/pages/first_page.dart';
-import 'package:tutorial1/pages/home_page.dart';
+import 'package:tutorial1/pages/todoapp/home_page.dart';
 import 'package:tutorial1/pages/profile_page.dart';
 import 'package:tutorial1/pages/settings_page.dart';
 import 'package:tutorial1/pages/todoapp/todo_page.dart';
@@ -29,13 +29,14 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      home: ToDoPage(),
-      routes: {
+      home: HomePage(),
+      theme: ThemeData(primaryColor: Colors.lightGreen),
+      /*routes: {
         '/firstpage': (context) => FirstPage(),
         '/homepage': (context) => HomePage(),
         '/settingspage': (context) => SettingsPage(),
         '/profilepage': (context) => ProfilePage(),
-      },
+      },*/
     );
   }
 }
