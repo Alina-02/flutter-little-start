@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:tutorial1/data/app_state.dart';
 import 'package:tutorial1/util/my_button.dart';
 
 class DialogBox extends StatelessWidget {
   final controller;
-  VoidCallback onSave;
+  void Function(ApplicationState) onSave;
   VoidCallback onCancel;
 
   DialogBox({
@@ -29,13 +31,21 @@ class DialogBox extends StatelessWidget {
                 hintText: "Add a new task",
               ),
             ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                MyButton(text: "Save", onPressed: onSave),
-                const SizedBox(width: 10),
-                MyButton(text: "Cancel", onPressed: onCancel),
-              ],
+            Consumer<ApplicationState>(
+              builder:
+                  (context, appState, _) => Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      MyButton(
+                        text: "Save",
+                        onPressed: () {
+                          onSave(appState);
+                        },
+                      ),
+                      const SizedBox(width: 10),
+                      MyButton(text: "Cancel", onPressed: onCancel),
+                    ],
+                  ),
             ),
           ],
         ),
