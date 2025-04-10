@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:tutorial1/data/app_state.dart';
-import 'package:tutorial1/data/database.dart';
 import 'package:tutorial1/pages/todoapp/authentication.dart';
 import 'package:tutorial1/util/dialog_box.dart';
 import 'package:tutorial1/util/todo_tile.dart';
@@ -20,27 +19,14 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   final _myBox = Hive.box('mybox');
-  ToDoDataBase db = ToDoDataBase();
-
-  @override
-  void initState() {
-    if (_myBox.get("TODOLIST") == null) {
-      db.createInitialData();
-    } else {
-      db.loadData();
-    }
-
-    super.initState();
-  }
 
   final _controller = TextEditingController();
 
   void checkBoxChanged(bool? value, int index, ApplicationState state) {
     if (state.loggedIn) {
       setState(() {
-        db.toDoList[index][1] = !db.toDoList[index][1];
+        //update task state in firebase
       });
-      db.updateData();
     }
   }
 
@@ -49,13 +35,10 @@ class _HomePageState extends State<HomePage> {
       String task = _controller.text;
 
       setState(() {
-        db.toDoList.add([task, false]);
+        state.addTask(task, false);
         _controller.clear();
       });
       Navigator.of(context).pop();
-
-      state.addTask(task, false);
-      //db.updateData();
     }
   }
 
@@ -75,9 +58,8 @@ class _HomePageState extends State<HomePage> {
   void deleteTask(int index, ApplicationState state) {
     if (state.loggedIn) {
       setState(() {
-        db.toDoList.removeAt(index);
+        // delete task from firebase
       });
-      db.updateData();
     }
   }
 

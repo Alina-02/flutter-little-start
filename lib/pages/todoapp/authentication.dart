@@ -14,14 +14,14 @@ class AuthFunc extends StatelessWidget {
     return Row(
       children: [
         Padding(
-          padding: const EdgeInsets.only(bottom: 8, right: 5),
+          padding: const EdgeInsets.only(bottom: 8, right: 10),
           child: IconButton(
             onPressed: () {
               !loggedIn ? context.push('/sign-in') : signOut();
             },
             icon:
                 !loggedIn
-                    ? const Text('Login')
+                    ? const Icon(Icons.login, color: Colors.black)
                     : const Icon(Icons.logout, color: Colors.black),
           ),
         ),
