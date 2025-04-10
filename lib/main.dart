@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
+
 import 'package:tutorial1/pages/counter_page.dart';
 import 'package:tutorial1/pages/first_page.dart';
 import 'package:tutorial1/pages/todoapp/home_page.dart';
@@ -9,8 +12,13 @@ import 'package:tutorial1/pages/todoapp/todo_page.dart';
 
 void main() async {
   await Hive.initFlutter();
-  //open a box
+  // open a box
   var box = await Hive.openBox('mybox');
+
+  // firebase
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+
   runApp(const MyApp());
 }
 

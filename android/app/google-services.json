@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "393679648995",
+    "project_id": "to-dufler",
+    "storage_bucket": "to-dufler.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:393679648995:android:27066c42424ff6ce7cedd6",
+        "android_client_info": {
+          "package_name": "com.example.tutorial1"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBDBCr6aQY7_GYfHwGhnB3t1tt7cC2bAYU"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
