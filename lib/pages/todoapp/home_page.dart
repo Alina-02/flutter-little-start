@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:provider/provider.dart';
 import 'package:tutorial1/data/app_state.dart';
+import 'package:tutorial1/data/task_message.dart';
 import 'package:tutorial1/pages/todoapp/authentication.dart';
 import 'package:tutorial1/util/dialog_box.dart';
 import 'package:tutorial1/util/todo_tile.dart';
@@ -23,9 +24,13 @@ class _HomePageState extends State<HomePage> {
   final _controller = TextEditingController();
 
   void checkBoxChanged(bool? value, int index, ApplicationState state) {
+    TaskMessage task = state.taskMessages[index];
+    bool completed = value as bool;
+
     if (state.loggedIn) {
       setState(() {
         //update task state in firebase
+        state.updateTask(task, completed);
       });
     }
   }
@@ -35,7 +40,7 @@ class _HomePageState extends State<HomePage> {
       String task = _controller.text;
 
       setState(() {
-        state.addTask(task, false);
+        state.addTask(task);
         _controller.clear();
       });
       Navigator.of(context).pop();

@@ -43,10 +43,13 @@ class ApplicationState extends ChangeNotifier {
                     .listen((snapshot) {
                       _taskMessages = [];
                       for (final document in snapshot.docs) {
+                        print(document);
                         _taskMessages.add(
                           TaskMessage(
-                            task: document.data()['task'] as String,
-                            completed: document.data()['completed'] as bool,
+                            id: document.id,
+                            task: document.data()['text'] as String,
+                            completed: document.data()['boolean'] as bool,
+                            timestamp: document.data()['timestamp'] as int,
                           ),
                         );
                       }
@@ -79,15 +82,31 @@ class ApplicationState extends ChangeNotifier {
         });
   }
 
-  Future<DocumentReference> addTask(String task, bool completed) {
+  Future<DocumentReference> addTask(String task) {
     if (!_loggedIn) {
       throw Exception('Must be logged in');
     }
 
     return FirebaseFirestore.instance.collection('tasks').add(<String, dynamic>{
       'text': task,
-      'boolean': completed,
+      'boolean': false,
       'timestamp': DateTime.now().millisecondsSinceEpoch,
+      'name': FirebaseAuth.instance.currentUser!.displayName,
+      'userId': FirebaseAuth.instance.currentUser!.uid,
+    });
+  }
+
+  Future<void> updateTask(TaskMessage task, bool completed) {
+    if (!_loggedIn) {
+      throw Exception('Must be logged in');
+    }
+
+    var collection = FirebaseFirestore.instance.collection('tasks');
+
+    return collection.doc(task.id).update({
+      'text': task.task,
+      'boolean': completed,
+      'timestamp': task.timestamp,
       'name': FirebaseAuth.instance.currentUser!.displayName,
       'userId': FirebaseAuth.instance.currentUser!.uid,
     });
