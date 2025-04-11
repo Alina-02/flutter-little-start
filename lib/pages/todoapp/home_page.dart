@@ -10,6 +10,7 @@ import 'package:tutorial1/util/todo_tile.dart';
 import 'package:firebase_auth/firebase_auth.dart' // new
     hide EmailAuthProvider, PhoneAuthProvider;
 import '../../data/app_state.dart'; // new
+import 'package:go_router/go_router.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -47,13 +48,26 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
+  void saveNewHabit(ApplicationState state) {
+    if (state.loggedIn) {
+      String task = _controller.text;
+
+      setState(() {
+        state.addHabit(task);
+        _controller.clear();
+      });
+      Navigator.of(context).pop();
+    }
+  }
+
   void createNewTask(ApplicationState state) {
     showDialog(
       context: context,
       builder: (context) {
         return DialogBox(
           controller: _controller,
-          onSave: saveNewTask,
+          onSaveTask: saveNewTask,
+          onSaveHabit: saveNewHabit,
           onCancel: () => Navigator.of(context).pop(),
         );
       },
@@ -72,7 +86,7 @@ class _HomePageState extends State<HomePage> {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext buildContext) {
     return Consumer<ApplicationState>(
       builder:
           (context, appState, _) => Scaffold(
@@ -103,6 +117,7 @@ class _HomePageState extends State<HomePage> {
             floatingActionButtonLocation:
                 FloatingActionButtonLocation.centerDocked,
             bottomNavigationBar: BottomAppBar(
+              padding: EdgeInsets.all(0),
               color: Colors.lightGreen,
               notchMargin: 5.0,
               shape: CircularNotchedRectangle(),
@@ -111,76 +126,109 @@ class _HomePageState extends State<HomePage> {
                 mainAxisSize: MainAxisSize.max,
                 children: [
                   Padding(
-                    padding: const EdgeInsets.only(left: 10.0),
-                    child: Column(
-                      children: [
-                        Icon(Icons.home, color: Colors.lightGreen[900]),
-                        Text(
+                    padding: const EdgeInsets.only(left: 5.0),
+                    //child: Column(
+                    //children: [
+                    child: IconButton(
+                      icon: Icon(Icons.home, color: Colors.lightGreen[900]),
+                      onPressed: () {
+                        context.go('/');
+                      },
+                    ),
+                    /*Text(
                           "Main",
                           style: TextStyle(color: Colors.lightGreen[900]),
-                        ),
-                      ],
-                    ),
+                        ),*/
+                    //],
+                    //),
                   ),
                   Padding(
-                    padding: const EdgeInsets.only(right: 10.0),
-                    child: Column(
-                      children: [
-                        Icon(Icons.sunny, color: Colors.lightGreen[900]),
-                        Text(
+                    padding: const EdgeInsets.only(right: 30.0),
+                    //child: Column(
+                    //children: [
+                    child: IconButton(
+                      icon: Icon(Icons.sunny, color: Colors.lightGreen[900]),
+                      onPressed: () {
+                        context.go('/habits');
+                      },
+                    ),
+                    /*   Text(
                           "Habits",
                           style: TextStyle(color: Colors.lightGreen[900]),
-                        ),
-                      ],
-                    ),
+                        ),*/
+                    //],
+                    //),
                   ),
                   Padding(
-                    padding: const EdgeInsets.only(left: 20.0),
-                    child: Column(
-                      children: [
-                        Icon(Icons.start_sharp, color: Colors.lightGreen[900]),
-                        Text(
+                    padding: const EdgeInsets.only(left: 30.0),
+                    //child: Column(
+                    //children: [
+                    child: IconButton(
+                      icon: Icon(
+                        Icons.start_sharp,
+                        color: Colors.lightGreen[900],
+                      ),
+                      onPressed: () {
+                        context.go('/stats');
+                      },
+                    ),
+                    /* Text(
                           "Stats",
                           style: TextStyle(color: Colors.lightGreen[900]),
-                        ),
-                      ],
-                    ),
+                        ),*/
+                    //],
+                    //),
                   ),
                   Padding(
-                    padding: const EdgeInsets.only(left: 10.0),
-                    child: Column(
-                      children: [
-                        Icon(Icons.person, color: Colors.lightGreen[900]),
-                        Text(
+                    padding: const EdgeInsets.only(left: 5.0),
+                    //child: Column(
+                    //children: [
+                    child: IconButton(
+                      icon: Icon(Icons.person, color: Colors.lightGreen[900]),
+                      onPressed: () {
+                        context.go('/profile');
+                      },
+                    ),
+                    /*Text(
                           "Profile",
                           style: TextStyle(color: Colors.lightGreen[900]),
-                        ),
-                      ],
-                    ),
+                        ),*/
+                    // ],
+                    //),
                   ),
                 ],
               ),
             ),
             body: Column(
               children: [
-                const Padding(
-                  padding: EdgeInsets.all(16.0),
+                Padding(
+                  padding: const EdgeInsets.all(16.0),
                   child: Text(
-                    'Habits',
+                    appState.habitMessages.isNotEmpty
+                        ? 'Habits'
+                        : 'Add some habits',
                     overflow: TextOverflow.ellipsis,
                     textAlign: TextAlign.start,
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    style: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
                 ...buildTaskList(appState.habitMessages, appState),
 
-                const Padding(
-                  padding: EdgeInsets.all(16.0),
+                Padding(
+                  padding: const EdgeInsets.all(16.0),
                   child: Text(
-                    'Tasks',
+                    appState.taskMessages.isNotEmpty
+                        ? 'Tasks'
+                        : 'Add some tasks',
                     overflow: TextOverflow.ellipsis,
                     textAlign: TextAlign.start,
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    style: const TextStyle(
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
                 ...buildTaskList(appState.taskMessages, appState),

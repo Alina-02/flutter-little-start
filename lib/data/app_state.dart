@@ -67,6 +67,7 @@ class ApplicationState extends ChangeNotifier {
                     .listen((snapshot) {
                       _habitMessages = [];
                       for (final document in snapshot.docs) {
+                        print(document);
                         _habitMessages.add(
                           TaskMessage(
                             id: document.id,
@@ -91,16 +92,16 @@ class ApplicationState extends ChangeNotifier {
     });
   }
 
-  Future<DocumentReference> addDayliTask(String task, bool completed) {
+  Future<DocumentReference> addHabit(String task) {
     if (!_loggedIn) {
       throw Exception('Must be logged in');
     }
 
     return FirebaseFirestore.instance
-        .collection('dailytasks')
+        .collection('habits')
         .add(<String, dynamic>{
           'text': task,
-          'boolean': completed,
+          'boolean': false,
           'timestamp': DateTime.now().millisecondsSinceEpoch,
           'name': FirebaseAuth.instance.currentUser!.displayName,
           'userId': FirebaseAuth.instance.currentUser!.uid,
