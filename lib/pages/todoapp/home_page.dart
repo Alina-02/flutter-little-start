@@ -61,9 +61,12 @@ class _HomePageState extends State<HomePage> {
   }
 
   void deleteTask(int index, ApplicationState state) {
+    TaskMessage task = state.taskMessages[index];
+
     if (state.loggedIn) {
       setState(() {
         // delete task from firebase
+        state.deleteTask(task);
       });
     }
   }

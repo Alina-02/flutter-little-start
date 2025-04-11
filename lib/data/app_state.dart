@@ -111,4 +111,13 @@ class ApplicationState extends ChangeNotifier {
       'userId': FirebaseAuth.instance.currentUser!.uid,
     });
   }
+
+  Future<void> deleteTask(TaskMessage task) {
+    if (!_loggedIn) {
+      throw Exception('Must be logged in');
+    }
+
+    var collection = FirebaseFirestore.instance.collection('tasks');
+    return collection.doc(task.id).delete();
+  }
 }
