@@ -95,24 +95,112 @@ class _HomePageState extends State<HomePage> {
                 createNewTask(appState);
               },
               backgroundColor: Colors.lightGreen,
+              foregroundColor: Colors.lightGreen[900],
               elevation: 0,
+              shape: CircleBorder(),
               child: Icon(Icons.add),
             ),
             floatingActionButtonLocation:
                 FloatingActionButtonLocation.centerDocked,
-            bottomNavigationBar: BottomAppBar(color: Colors.lightGreen),
-            body: ListView.builder(
-              itemCount: appState.taskMessages.length,
-              itemBuilder: (context, index) {
-                return ToDoTile(
-                  taskName: appState.taskMessages[index].task,
-                  taskCompleted: appState.taskMessages[index].completed,
-                  onChanged: (value) => checkBoxChanged(value, index, appState),
-                  deleteFunction: (context) => deleteTask(index, appState),
-                );
-              },
+            bottomNavigationBar: BottomAppBar(
+              color: Colors.lightGreen,
+              notchMargin: 5.0,
+              shape: CircularNotchedRectangle(),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                mainAxisSize: MainAxisSize.max,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.only(left: 10.0),
+                    child: Column(
+                      children: [
+                        Icon(Icons.home, color: Colors.lightGreen[900]),
+                        Text(
+                          "Main",
+                          style: TextStyle(color: Colors.lightGreen[900]),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(right: 10.0),
+                    child: Column(
+                      children: [
+                        Icon(Icons.sunny, color: Colors.lightGreen[900]),
+                        Text(
+                          "Habits",
+                          style: TextStyle(color: Colors.lightGreen[900]),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 20.0),
+                    child: Column(
+                      children: [
+                        Icon(Icons.start_sharp, color: Colors.lightGreen[900]),
+                        Text(
+                          "Stats",
+                          style: TextStyle(color: Colors.lightGreen[900]),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(left: 10.0),
+                    child: Column(
+                      children: [
+                        Icon(Icons.person, color: Colors.lightGreen[900]),
+                        Text(
+                          "Profile",
+                          style: TextStyle(color: Colors.lightGreen[900]),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            body: Column(
+              children: [
+                const Padding(
+                  padding: EdgeInsets.all(16.0),
+                  child: Text(
+                    'Habits',
+                    overflow: TextOverflow.ellipsis,
+                    textAlign: TextAlign.start,
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
+                ),
+                ...buildTaskList(appState.habitMessages, appState),
+
+                const Padding(
+                  padding: EdgeInsets.all(16.0),
+                  child: Text(
+                    'Tasks',
+                    overflow: TextOverflow.ellipsis,
+                    textAlign: TextAlign.start,
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
+                ),
+                ...buildTaskList(appState.taskMessages, appState),
+              ],
             ),
           ),
     );
+  }
+
+  List<Widget> buildTaskList(
+    List<TaskMessage> tasks,
+    ApplicationState appState,
+  ) {
+    return List.generate(tasks.length, (index) {
+      return ToDoTile(
+        taskName: tasks[index].task,
+        taskCompleted: tasks[index].completed,
+        onChanged: (value) => checkBoxChanged(value, index, appState),
+        deleteFunction: (context) => deleteTask(index, appState),
+      );
+    });
   }
 }

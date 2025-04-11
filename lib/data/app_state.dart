@@ -25,6 +25,10 @@ class ApplicationState extends ChangeNotifier {
   List<TaskMessage> _taskMessages = [];
   List<TaskMessage> get taskMessages => _taskMessages;
 
+  StreamSubscription<QuerySnapshot>? _habitMessagesSubscription;
+  List<TaskMessage> _habitMessages = [];
+  List<TaskMessage> get habitMessages => _habitMessages;
+
   Future<void> init() async {
     await Firebase.initializeApp(
       options: DefaultFirebaseOptions.currentPlatform,
@@ -43,8 +47,27 @@ class ApplicationState extends ChangeNotifier {
                     .listen((snapshot) {
                       _taskMessages = [];
                       for (final document in snapshot.docs) {
-                        print(document);
                         _taskMessages.add(
+                          TaskMessage(
+                            id: document.id,
+                            task: document.data()['text'] as String,
+                            completed: document.data()['boolean'] as bool,
+                            timestamp: document.data()['timestamp'] as int,
+                          ),
+                        );
+                      }
+                      notifyListeners();
+                    })
+                as List<TaskMessage>;
+        _habitMessages =
+            FirebaseFirestore.instance
+                    .collection('habits')
+                    .orderBy('timestamp', descending: true)
+                    .snapshots()
+                    .listen((snapshot) {
+                      _habitMessages = [];
+                      for (final document in snapshot.docs) {
+                        _habitMessages.add(
                           TaskMessage(
                             id: document.id,
                             task: document.data()['text'] as String,
@@ -60,6 +83,8 @@ class ApplicationState extends ChangeNotifier {
         _loggedIn = false;
         _taskMessages = [];
         _taskMessagesSubscription?.cancel();
+        _habitMessages = [];
+        _habitMessagesSubscription?.cancel();
       }
 
       notifyListeners();
