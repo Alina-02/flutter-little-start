@@ -127,42 +127,27 @@ class _HomePageState extends State<HomePage> {
                 children: [
                   Padding(
                     padding: const EdgeInsets.only(left: 5.0),
-                    //child: Column(
-                    //children: [
+
                     child: IconButton(
                       icon: Icon(Icons.home, color: Colors.lightGreen[900]),
                       onPressed: () {
                         context.go('/');
                       },
                     ),
-                    /*Text(
-                          "Main",
-                          style: TextStyle(color: Colors.lightGreen[900]),
-                        ),*/
-                    //],
-                    //),
                   ),
                   Padding(
                     padding: const EdgeInsets.only(right: 30.0),
-                    //child: Column(
-                    //children: [
+
                     child: IconButton(
                       icon: Icon(Icons.sunny, color: Colors.lightGreen[900]),
                       onPressed: () {
                         context.go('/habits');
                       },
                     ),
-                    /*   Text(
-                          "Habits",
-                          style: TextStyle(color: Colors.lightGreen[900]),
-                        ),*/
-                    //],
-                    //),
                   ),
                   Padding(
                     padding: const EdgeInsets.only(left: 30.0),
-                    //child: Column(
-                    //children: [
+
                     child: IconButton(
                       icon: Icon(
                         Icons.start_sharp,
@@ -172,29 +157,16 @@ class _HomePageState extends State<HomePage> {
                         context.go('/stats');
                       },
                     ),
-                    /* Text(
-                          "Stats",
-                          style: TextStyle(color: Colors.lightGreen[900]),
-                        ),*/
-                    //],
-                    //),
                   ),
                   Padding(
                     padding: const EdgeInsets.only(left: 5.0),
-                    //child: Column(
-                    //children: [
+
                     child: IconButton(
                       icon: Icon(Icons.person, color: Colors.lightGreen[900]),
                       onPressed: () {
                         context.go('/profile');
                       },
                     ),
-                    /*Text(
-                          "Profile",
-                          style: TextStyle(color: Colors.lightGreen[900]),
-                        ),*/
-                    // ],
-                    //),
                   ),
                 ],
               ),
@@ -238,10 +210,7 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  List<Widget> buildTaskList(
-    List<TaskMessage> tasks,
-    ApplicationState appState,
-  ) {
+  List<Widget> buildTaskList(List tasks, ApplicationState appState) {
     return List.generate(tasks.length, (index) {
       return ToDoTile(
         taskName: tasks[index].task,

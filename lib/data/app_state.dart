@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_ui_auth/firebase_ui_auth.dart';
 
 import 'package:flutter/material.dart';
+import 'package:tutorial1/data/habit_message.dart';
 import '../firebase_options.dart';
 import 'task_message.dart';
 
@@ -26,8 +27,8 @@ class ApplicationState extends ChangeNotifier {
   List<TaskMessage> get taskMessages => _taskMessages;
 
   StreamSubscription<QuerySnapshot>? _habitMessagesSubscription;
-  List<TaskMessage> _habitMessages = [];
-  List<TaskMessage> get habitMessages => _habitMessages;
+  List<HabitMessage> _habitMessages = [];
+  List<HabitMessage> get habitMessages => _habitMessages;
 
   Future<void> init() async {
     await Firebase.initializeApp(
@@ -39,47 +40,43 @@ class ApplicationState extends ChangeNotifier {
     FirebaseAuth.instance.userChanges().listen((user) {
       if (user != null) {
         _loggedIn = true;
-        _taskMessages =
-            FirebaseFirestore.instance
-                    .collection('tasks')
-                    .orderBy('timestamp', descending: true)
-                    .snapshots()
-                    .listen((snapshot) {
-                      _taskMessages = [];
-                      for (final document in snapshot.docs) {
-                        _taskMessages.add(
-                          TaskMessage(
-                            id: document.id,
-                            task: document.data()['text'] as String,
-                            completed: document.data()['boolean'] as bool,
-                            timestamp: document.data()['timestamp'] as int,
-                          ),
-                        );
-                      }
-                      notifyListeners();
-                    })
-                as List<TaskMessage>;
-        _habitMessages =
-            FirebaseFirestore.instance
-                    .collection('habits')
-                    .orderBy('timestamp', descending: true)
-                    .snapshots()
-                    .listen((snapshot) {
-                      _habitMessages = [];
-                      for (final document in snapshot.docs) {
-                        print(document);
-                        _habitMessages.add(
-                          TaskMessage(
-                            id: document.id,
-                            task: document.data()['text'] as String,
-                            completed: document.data()['boolean'] as bool,
-                            timestamp: document.data()['timestamp'] as int,
-                          ),
-                        );
-                      }
-                      notifyListeners();
-                    })
-                as List<TaskMessage>;
+        _taskMessagesSubscription = FirebaseFirestore.instance
+            .collection('tasks')
+            .orderBy('timestamp', descending: true)
+            .snapshots()
+            .listen((snapshot) {
+              _taskMessages =
+                  snapshot.docs.map((document) {
+                    final data = document.data();
+                    return TaskMessage(
+                      id: document.id,
+                      task: data['text'] as String,
+                      completed: data['boolean'] as bool,
+                      timestamp: data['timestamp'] as int,
+                    );
+                  }).toList();
+              notifyListeners();
+            });
+        _habitMessagesSubscription = FirebaseFirestore.instance
+            .collection('habits')
+            .orderBy('timestamp', descending: true)
+            .snapshots()
+            .listen((snapshot) {
+              _habitMessages = [];
+              for (final document in snapshot.docs) {
+                _habitMessages.add(
+                  HabitMessage(
+                    id: document.id,
+                    task: document.data()['text'] as String,
+                    completed: document.data()['boolean'] as bool,
+                    timestamp: document.data()['timestamp'] as int,
+                    completedDays:
+                        document.data()['completedDays'] as List<dynamic>,
+                  ),
+                );
+              }
+              notifyListeners();
+            });
       } else {
         _loggedIn = false;
         _taskMessages = [];
@@ -105,7 +102,41 @@ class ApplicationState extends ChangeNotifier {
           'timestamp': DateTime.now().millisecondsSinceEpoch,
           'name': FirebaseAuth.instance.currentUser!.displayName,
           'userId': FirebaseAuth.instance.currentUser!.uid,
+          'completedDays': [],
         });
+  }
+
+  Future<void> completeHabit(HabitMessage habit) {
+    if (!_loggedIn) {
+      throw Exception('Must be logged in');
+    }
+
+    var collection = FirebaseFirestore.instance.collection('tasks');
+    return collection.doc(habit.id).update({
+      'text': habit.task,
+      'timestamp': habit.timestamp,
+      'name': FirebaseAuth.instance.currentUser!.displayName,
+      'userId': FirebaseAuth.instance.currentUser!.uid,
+      'completedDays': [
+        ...habit.completedDays,
+        DateTime.now().millisecondsSinceEpoch,
+      ],
+    });
+  }
+
+  Future<void> unCompleteHabit(HabitMessage habit) {
+    if (!_loggedIn) {
+      throw Exception('Must be logged in');
+    }
+
+    var collection = FirebaseFirestore.instance.collection('tasks');
+    return collection.doc(habit.id).update({
+      'text': habit.task,
+      'timestamp': habit.timestamp,
+      'name': FirebaseAuth.instance.currentUser!.displayName,
+      'userId': FirebaseAuth.instance.currentUser!.uid,
+      'completedDays': habit.completedDays.removeLast(),
+    });
   }
 
   Future<DocumentReference> addTask(String task) {

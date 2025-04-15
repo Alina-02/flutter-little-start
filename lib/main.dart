@@ -4,6 +4,7 @@ import 'package:firebase_ui_auth/firebase_ui_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:tutorial1/pages/todoapp/habits_page.dart';
 import 'package:tutorial1/pages/todoapp/stats_page.dart';
+import 'package:tutorial1/theme/theme_provider.dart';
 import 'firebase_options.dart';
 import 'package:go_router/go_router.dart';
 
@@ -22,9 +23,14 @@ void main() async {
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
   runApp(
-    ChangeNotifierProvider(
-      create: (context) => ApplicationState(),
-      builder: ((context, child) => const MyApp()),
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(
+          create: (context) => ApplicationState(),
+          builder: ((context, child) => const MyApp()),
+        ),
+        ChangeNotifierProvider(create: (context) => ThemeProvider()),
+      ],
     ),
   );
 }
